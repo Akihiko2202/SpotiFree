@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpotiFree</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    overflow:hidden;
+    color:white;
+}
+
+/* Video nền */
+#bg-video{
+    position:fixed;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-3;
+    transition:1s ease;
+}
+
+/* Blur layer */
+.blur{
+    position:fixed;
+    width:100%;
+    height:100%;
+    backdrop-filter:blur(20px);
+    background:rgba(0,0,0,0.6);
+    z-index:-2;
+}
+
+/* Layout */
+.container{
+    display:flex;
+    height:100vh;
+}
+
+/* Playlist */
+.playlist{
+    width:300px;
+    background:#121212;
+    padding:20px;
+    overflow-y:auto;
+}
+
+.song-item{
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.song-item:hover{ background:#1db954; }
+.active{ background:#1db954; }
+
+/* Player */
+.player{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.player-box{
+    background:#181818;
+    padding:30px;
+    border-radius:20px;
+    width:420px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,0.6);
+    transition:0.5s;
+}
+
+/* Cover */
+.cover{
+    width:240px;
+    height:240px;
+    border-radius:50%;
+    margin-bottom:20px;
+    animation:spin 10s linear infinite;
+    animation-play-state:paused;
+}
+
+@keyframes spin{
+    from{ transform:rotate(0deg);}
+    to{ transform:rotate(360deg);}
+}
+
+/* Controls */
+.controls button{
+    background:#1db954;
+    border:none;
+    padding:10px 16px;
+    border-radius:30px;
+    margin:5px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.controls button:hover{ opacity:0.8; }
+
+.progress{ width:100%; margin:10px 0; }
+.volume{ width:100%; }
+
+.time{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:10px;
+    color:#aaa;
+}
+
+</style>
+</head>
+<body>
+
+<video autoplay muted loop id="bg-video"></video>
+<div class="blur"></div>
+
+<div class="container">
+
+<div class="playlist">
+<h2>Danh Sách Nhạc</h2>
+<div id="playlist"></div>
+</div>
+
+<div class="player">
+<div class="player-box">
+
+<img id="cover" class="cover">
+<h3 id="title"></h3>
+<p id="artist" style="color:#aaa"></p>
+
+<div class="time">
+<span id="current">00:00</span>
+<span id="duration">00:00</span>
+</div>
+
+<input type="range" id="progress" class="progress" value="0">
+
+<div class="controls">
+<button onclick="toggleShuffle()">🔀</button>
+<button onclick="prevSong()">⏮</button>
+<button onclick="playPause()">▶/⏸</button>
+<button onclick="nextSong()">⏭</button>
+<button onclick="toggleRepeat()">🔁</button>
+</div>
+
+<br>
+Volume
+<input type="range" id="volume" class="volume" min="0" max="1" step="0.01">
+
+<audio id="audio"></audio>
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+const songs=[
+{ name:"『 水鏡に雫 』", artist:"Vivia", file:"music1.mp3", cover:"cover1.jpg", video:"video1.mp4"},
+{ name:"「Tabun (Có lẽ)」", artist:"YOASOBI", file:"music2.mp3", cover:"cover2.jpg", video:"video2.mp4"},
+{ name:"水平線のような僕らへ", artist:"Vivid Lila", file:"music3.mp3", cover:"cover3.jpg", video:"video3.mp4"}
+];
+
+const audio=document.getElementById("audio");
+const title=document.getElementById("title");
+const artist=document.getElementById("artist");
+const cover=document.getElementById("cover");
+const bgVideo=document.getElementById("bg-video");
+const playlist=document.getElementById("playlist");
+const progress=document.getElementById("progress");
+const volume=document.getElementById("volume");
+const currentEl=document.getElementById("current");
+const durationEl=document.getElementById("duration");
+
+let currentSong=0;
+let shuffle=false;
+let repeat=false;
+
+/* Playlist */
+songs.forEach((song,index)=>{
+    const div=document.createElement("div");
+    div.classList.add("song-item");
+    div.innerText=song.name;
+    div.onclick=()=>loadSong(index);
+    playlist.appendChild(div);
+});
+
+function loadSong(index){
+    currentSong=index;
+    audio.src=songs[index].file;
+    title.innerText=songs[index].name;
+    artist.innerText=songs[index].artist;
+    cover.src=songs[index].cover;
+    bgVideo.src=songs[index].video;
+
+    document.querySelectorAll(".song-item").forEach(el=>el.classList.remove("active"));
+    document.querySelectorAll(".song-item")[index].classList.add("active");
+
+    audio.play();
+}
+
+function playPause(){
+    audio.paused?audio.play():audio.pause();
+}
+
+function nextSong(){
+    if(shuffle){
+        currentSong=Math.floor(Math.random()*songs.length);
+    }else{
+        currentSong++;
+        if(currentSong>=songs.length) currentSong=0;
+    }
+    loadSong(currentSong);
+}
+
+function prevSong(){
+    currentSong--;
+    if(currentSong<0) currentSong=songs.length-1;
+    loadSong(currentSong);
+}
+
+function toggleShuffle(){ shuffle=!shuffle; }
+function toggleRepeat(){ repeat=!repeat; }
+
+/* Time format */
+function formatTime(sec){
+    let m=Math.floor(sec/60);
+    let s=Math.floor(sec%60);
+    return `${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
+}
+
+audio.addEventListener("loadedmetadata",()=>{
+    durationEl.innerText=formatTime(audio.duration);
+});
+
+audio.addEventListener("timeupdate",()=>{
+    progress.value=(audio.currentTime/audio.duration)*100;
+    currentEl.innerText=formatTime(audio.currentTime);
+});
+
+progress.addEventListener("input",()=>{
+    audio.currentTime=(progress.value/100)*audio.duration;
+});
+
+volume.value=0.7;
+audio.volume=0.7;
+volume.addEventListener("input",()=>audio.volume=volume.value);
+
+audio.addEventListener("play",()=>cover.style.animationPlayState="running");
+audio.addEventListener("pause",()=>cover.style.animationPlayState="paused");
+
+audio.addEventListener("ended",()=>{
+    if(repeat){
+        audio.play();
+    }else{
+        nextSong();
+    }
+});
+
+loadSong(0);
+
+</script>
+
+</body>
+</html>
