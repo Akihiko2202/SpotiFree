@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpotiFree</title>
+<link rel="icon" type="image/png" href="icon.png">
 
 <style>
 *{
@@ -31,11 +32,11 @@ body{
 /* Blur layer */
 .blur{
     position:fixed;
-    width:100%;
-    height:100%;
+    inset:0;
     backdrop-filter:blur(20px);
-    background:rgba(0,0,0,0.6);
-    z-index:-2;
+    -webkit-backdrop-filter:blur(20px);
+    background:rgba(0,0,0,0.5);
+    z-index:-1;
 }
 
 /* Layout */
@@ -47,7 +48,8 @@ body{
 /* Playlist */
 .playlist{
     width:300px;
-    background:#121212;
+    background:rgba(18,18,18,0.85);
+    backdrop-filter:blur(20px);
     padding:20px;
     overflow-y:auto;
 }
@@ -119,7 +121,36 @@ body{
     margin-bottom:10px;
     color:#aaa;
 }
+.time{
+    ...
+}
 
+/* ===== Scrollbar Spotify Style ===== */
+
+.playlist::-webkit-scrollbar{
+    width:8px;
+}
+
+.playlist::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.playlist::-webkit-scrollbar-thumb{
+    background:#535353;
+    border-radius:10px;
+}
+
+.playlist::-webkit-scrollbar-thumb:hover{
+    background:#b3b3b3;
+}
+
+/* Firefox */
+.playlist{
+    scrollbar-width:thin;
+    scrollbar-color:#535353 transparent;
+}
+
+</style>
 </style>
 </head>
 <body>
@@ -170,10 +201,66 @@ body{
 <script>
 
 const songs=[
+
 { name:"『 水鏡に雫 』", artist:"Vivia", file:"music1.mp3", cover:"cover1.jpg", video:"video1.mp4"},
 { name:"「Tabun (Có lẽ)」", artist:"YOASOBI", file:"music2.mp3", cover:"cover2.jpg", video:"video2.mp4"},
-{ name:"水平線のような僕らへ", artist:"Vivid Lila", file:"music3.mp3", cover:"cover3.jpg", video:"video3.mp4"}
+{ name:"水平線のような僕らへ", artist:"Vivid Lila", file:"music3.mp3", cover:"cover3.jpg", video:"video3.mp4"},
+
+// ===== Thêm 50 bài =====
+
+{ name:"大塚 愛 / さくらんぼ", artist:"avex", file:"music4.mp3", cover:"cover4.jpg", video:"video4.mp4"},
+{ name:"Ngã Tư Không Đèn", artist:"Nhạc Của Trang", file:"music5.mp3", cover:"cover5.jpg", video:"video5.mp4"},
+{ name:"Ngồi Nhìn Em Khóc", artist:"Sáo", file:"music6.mp3", cover:"cover6.jpg", video:"video6.mp4"},
+{ name:"Song 7", artist:"Artist 7", file:"music7.mp3", cover:"cover7.jpg", video:"video7.mp4"},
+{ name:"Song 8", artist:"Artist 8", file:"music8.mp3", cover:"cover8.jpg", video:"video8.mp4"},
+{ name:"Song 9", artist:"Artist 9", file:"music9.mp3", cover:"cover9.jpg", video:"video9.mp4"},
+{ name:"Song 10", artist:"Artist 10", file:"music10.mp3", cover:"cover10.jpg", video:"video10.mp4"},
+{ name:"Song 11", artist:"Artist 11", file:"music11.mp3", cover:"cover11.jpg", video:"video11.mp4"},
+{ name:"Song 12", artist:"Artist 12", file:"music12.mp3", cover:"cover12.jpg", video:"video12.mp4"},
+{ name:"Song 13", artist:"Artist 13", file:"music13.mp3", cover:"cover13.jpg", video:"video13.mp4"},
+{ name:"Song 14", artist:"Artist 14", file:"music14.mp3", cover:"cover14.jpg", video:"video14.mp4"},
+{ name:"Song 15", artist:"Artist 15", file:"music15.mp3", cover:"cover15.jpg", video:"video15.mp4"},
+{ name:"Song 16", artist:"Artist 16", file:"music16.mp3", cover:"cover16.jpg", video:"video16.mp4"},
+{ name:"Song 17", artist:"Artist 17", file:"music17.mp3", cover:"cover17.jpg", video:"video17.mp4"},
+{ name:"Song 18", artist:"Artist 18", file:"music18.mp3", cover:"cover18.jpg", video:"video18.mp4"},
+{ name:"Song 19", artist:"Artist 19", file:"music19.mp3", cover:"cover19.jpg", video:"video19.mp4"},
+{ name:"Song 20", artist:"Artist 20", file:"music20.mp3", cover:"cover20.jpg", video:"video20.mp4"},
+{ name:"Song 21", artist:"Artist 21", file:"music21.mp3", cover:"cover21.jpg", video:"video21.mp4"},
+{ name:"Song 22", artist:"Artist 22", file:"music22.mp3", cover:"cover22.jpg", video:"video22.mp4"},
+{ name:"Song 23", artist:"Artist 23", file:"music23.mp3", cover:"cover23.jpg", video:"video23.mp4"},
+{ name:"Song 24", artist:"Artist 24", file:"music24.mp3", cover:"cover24.jpg", video:"video24.mp4"},
+{ name:"Song 25", artist:"Artist 25", file:"music25.mp3", cover:"cover25.jpg", video:"video25.mp4"},
+{ name:"Song 26", artist:"Artist 26", file:"music26.mp3", cover:"cover26.jpg", video:"video26.mp4"},
+{ name:"Song 27", artist:"Artist 27", file:"music27.mp3", cover:"cover27.jpg", video:"video27.mp4"},
+{ name:"Song 28", artist:"Artist 28", file:"music28.mp3", cover:"cover28.jpg", video:"video28.mp4"},
+{ name:"Song 29", artist:"Artist 29", file:"music29.mp3", cover:"cover29.jpg", video:"video29.mp4"},
+{ name:"Song 30", artist:"Artist 30", file:"music30.mp3", cover:"cover30.jpg", video:"video30.mp4"},
+{ name:"Song 31", artist:"Artist 31", file:"music31.mp3", cover:"cover31.jpg", video:"video31.mp4"},
+{ name:"Song 32", artist:"Artist 32", file:"music32.mp3", cover:"cover32.jpg", video:"video32.mp4"},
+{ name:"Song 33", artist:"Artist 33", file:"music33.mp3", cover:"cover33.jpg", video:"video33.mp4"},
+{ name:"Song 34", artist:"Artist 34", file:"music34.mp3", cover:"cover34.jpg", video:"video34.mp4"},
+{ name:"Song 35", artist:"Artist 35", file:"music35.mp3", cover:"cover35.jpg", video:"video35.mp4"},
+{ name:"Song 36", artist:"Artist 36", file:"music36.mp3", cover:"cover36.jpg", video:"video36.mp4"},
+{ name:"Song 37", artist:"Artist 37", file:"music37.mp3", cover:"cover37.jpg", video:"video37.mp4"},
+{ name:"Song 38", artist:"Artist 38", file:"music38.mp3", cover:"cover38.jpg", video:"video38.mp4"},
+{ name:"Song 39", artist:"Artist 39", file:"music39.mp3", cover:"cover39.jpg", video:"video39.mp4"},
+{ name:"Song 40", artist:"Artist 40", file:"music40.mp3", cover:"cover40.jpg", video:"video40.mp4"},
+{ name:"Song 41", artist:"Artist 41", file:"music41.mp3", cover:"cover41.jpg", video:"video41.mp4"},
+{ name:"Song 42", artist:"Artist 42", file:"music42.mp3", cover:"cover42.jpg", video:"video42.mp4"},
+{ name:"Song 43", artist:"Artist 43", file:"music43.mp3", cover:"cover43.jpg", video:"video43.mp4"},
+{ name:"Song 44", artist:"Artist 44", file:"music44.mp3", cover:"cover44.jpg", video:"video44.mp4"},
+{ name:"Song 45", artist:"Artist 45", file:"music45.mp3", cover:"cover45.jpg", video:"video45.mp4"},
+{ name:"Song 46", artist:"Artist 46", file:"music46.mp3", cover:"cover46.jpg", video:"video46.mp4"},
+{ name:"Song 47", artist:"Artist 47", file:"music47.mp3", cover:"cover47.jpg", video:"video47.mp4"},
+{ name:"Song 48", artist:"Artist 48", file:"music48.mp3", cover:"cover48.jpg", video:"video48.mp4"},
+{ name:"Song 49", artist:"Artist 49", file:"music49.mp3", cover:"cover49.jpg", video:"video49.mp4"},
+{ name:"Song 50", artist:"Artist 50", file:"music50.mp3", cover:"cover50.jpg", video:"video50.mp4"},
+{ name:"Song 51", artist:"Artist 51", file:"music51.mp3", cover:"cover51.jpg", video:"video51.mp4"},
+{ name:"Song 52", artist:"Artist 52", file:"music52.mp3", cover:"cover52.jpg", video:"video52.mp4"},
+{ name:"Song 53", artist:"Artist 53", file:"music53.mp3", cover:"cover53.jpg", video:"video53.mp4"}
+
 ];
+
 
 const audio=document.getElementById("audio");
 const title=document.getElementById("title");
@@ -277,4 +364,3 @@ loadSong(0);
 
 </body>
 </html>
-
