@@ -63,7 +63,8 @@ body{
 }
 
 .song-item:hover{ background:#1db954; }
-.active{ background:#1db954; }
+.active{ background:none; }
+
 
 /* Player */
 .player{
@@ -100,7 +101,7 @@ body{
 
 /* Controls */
 .controls button{
-    background:#1db954;
+    background:#51f704;
     border:none;
     padding:10px 16px;
     border-radius:30px;
@@ -162,8 +163,15 @@ body{
 
 <div class="playlist">
 <h2>Danh Sách Nhạc</h2>
+
+<h3 style="margin-top:15px;color:#1db954;">is satboi time</h3>
+<div id="playlist-buon"></div>
+
+<h3 style="margin-top:20px;color:#1db954;">is wibu time</h3>
 <div id="playlist"></div>
+
 </div>
+
 
 <div class="player">
 <div class="player-box">
@@ -209,13 +217,13 @@ const songs=[
 // ===== Thêm 50 bài =====
 
 { name:"大塚 愛 / さくらんぼ", artist:"avex", file:"music4.mp3", cover:"cover4.jpg", video:"video4.mp4"},
-{ name:"Ngã Tư Không Đèn", artist:"Nhạc Của Trang", file:"music5.mp3", cover:"cover5.jpg", video:"video5.mp4"},
-{ name:"Ngồi Nhìn Em Khóc", artist:"Sáo", file:"music6.mp3", cover:"cover6.jpg", video:"video6.mp4"},
-{ name:"Song 7", artist:"Artist 7", file:"music7.mp3", cover:"cover7.jpg", video:"video7.mp4"},
-{ name:"Song 8", artist:"Artist 8", file:"music8.mp3", cover:"cover8.jpg", video:"video8.mp4"},
-{ name:"Song 9", artist:"Artist 9", file:"music9.mp3", cover:"cover9.jpg", video:"video9.mp4"},
-{ name:"Song 10", artist:"Artist 10", file:"music10.mp3", cover:"cover10.jpg", video:"video10.mp4"},
-{ name:"Song 11", artist:"Artist 11", file:"music11.mp3", cover:"cover11.jpg", video:"video11.mp4"},
+{ name:"Ngã Tư Không Đèn", artist:"Nhạc Của Trang", file:"music5.mp3", cover:"cover5.jpg", video:"video5.mp4", type:"buon"},
+{ name:"Ngồi Nhìn Em Khóc", artist:"Sáo", file:"music6.mp3", cover:"cover6.jpg", video:"video6.mp4", type:"buon"},
+{ name:"Em Không Khóc", artist:"buitruonglinh ft vuphungtien", file:"music7.mp3", cover:"cover7.jpg", video:"video7.mp4", type:"buon"},
+{ name:"10 Ngàn Năm", artist:"Prod. Duckie", file:"music8.mp3", cover:"cover8.jpg", video:"video8.mp4", type:"buon"},
+{ name:"Chết Trong Em", artist:"Thịnh Suy", file:"music9.mp3", cover:"cover9.jpg", video:"video9.mp4", type:"buon"},
+{ name:"「僕の心のヤバイやつ」", artist:"AniOp", file:"music10.mp3", cover:"cover10.jpg", video:"video10.mp4"},
+{ name:"斜陽", artist:"ヨルシカ", file:"music11.mp3", cover:"cover11.jpg", video:"video11.mp4"},
 { name:"Song 12", artist:"Artist 12", file:"music12.mp3", cover:"cover12.jpg", video:"video12.mp4"},
 { name:"Song 13", artist:"Artist 13", file:"music13.mp3", cover:"cover13.jpg", video:"video13.mp4"},
 { name:"Song 14", artist:"Artist 14", file:"music14.mp3", cover:"cover14.jpg", video:"video14.mp4"},
@@ -278,13 +286,32 @@ let shuffle=false;
 let repeat=false;
 
 /* Playlist */
+const playlistBuon = document.getElementById("playlist-buon");
+
+/* Nhạc Buồn */
 songs.forEach((song,index)=>{
-    const div=document.createElement("div");
-    div.classList.add("song-item");
-    div.innerText=song.name;
-    div.onclick=()=>loadSong(index);
-    playlist.appendChild(div);
+    if(song.type === "buon"){
+        const div=document.createElement("div");
+        div.classList.add("song-item");
+        div.innerText=song.name;
+        div.onclick=()=>loadSong(index);
+        playlistBuon.appendChild(div);
+    }
 });
+
+/* Tất Cả Bài Hát (không gồm nhạc buồn) */
+songs.forEach((song,index)=>{
+    if(song.type !== "buon"){
+        const div=document.createElement("div");
+        div.classList.add("song-item");
+        div.innerText=song.name;
+        div.onclick=()=>loadSong(index);
+        playlist.appendChild(div);
+    }
+});
+
+
+
 
 function loadSong(index){
     currentSong=index;
