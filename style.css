@@ -145,3 +145,20 @@
     }
 
 }
+@media screen and (max-width: 768px) {
+    body {
+        margin: 0;
+        background: #000;
+    }
+
+    .player {
+        width: 100% !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+    }
+
+    .cover {
+        width: 70vw !important;
+        height: 70vw !important;
+    }
+}
