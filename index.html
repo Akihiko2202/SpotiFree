@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head><link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpotiFree</title>
@@ -112,8 +113,109 @@ body{
 
 .controls button:hover{ opacity:0.8; }
 
-.progress{ width:100%; margin:10px 0; }
-.volume{ width:100%; }
+.progress{
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #535353;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Track nền */
+.progress::-webkit-slider-runnable-track{
+    height:4px;
+    background:linear-gradient(to right,
+        var(--played-color, white) var(--progress,0%),
+        #535353 var(--progress,0%)
+    );
+    border-radius:10px;
+}
+
+/* Thumb */
+.progress::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    height:12px;
+    width:12px;
+    border-radius:50%;
+    background:white;
+    margin-top:-4px;
+    opacity:0;
+    transition:0.15s ease;
+}
+
+/* Hover hiện thumb + đổi màu */
+.progress:hover::-webkit-slider-thumb{
+    opacity:1;
+}
+
+.progress:hover::-webkit-slider-runnable-track{
+    background:linear-gradient(to right,
+        #1db954 var(--progress,0%),
+        #535353 var(--progress,0%)
+    );
+}
+
+/* Firefox */
+.progress::-moz-range-track{
+    height:4px;
+    background:#535353;
+    border-radius:10px;
+}
+
+.progress::-moz-range-progress{
+    background:white;
+    height:4px;
+    border-radius:10px;
+}
+
+.progress:hover::-moz-range-progress{
+    background:#1db954;
+}
+
+.progress::-moz-range-thumb{
+    height:12px;
+    width:12px;
+    border:none;
+    border-radius:50%;
+    background:white;
+    opacity:0;
+}
+
+.progress:hover::-moz-range-thumb{
+    opacity:1;
+}
+
+.volume{
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #535353;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Track */
+.volume::-webkit-slider-runnable-track{
+    height:4px;
+    background:linear-gradient(to right,
+        var(--volume-color, white) var(--volume-progress,70%),
+        #535353 var(--volume-progress,70%)
+    );
+    border-radius:10px;
+}
+
+/* Thumb */
+.volume::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    height:12px;
+    width:12px;
+    border-radius:50%;
+    ba
+
 
 .time{
     display:flex;
@@ -123,8 +225,13 @@ body{
     color:#aaa;
 }
 .time{
-    ...
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#b3b3b3;
+    margin-bottom:6px;
 }
+
 
 /* ===== Scrollbar Spotify Style ===== */
 
@@ -176,6 +283,23 @@ body{
 }
 
 }
+.progress-wrapper{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.progress-wrapper span{
+    font-size: 13px;
+    color: #b3b3b3;
+    width: 40px;
+    text-align: center;
+}
+
+#progress{
+    flex: 1;
+}
 
 </style>
 </head>
@@ -204,19 +328,34 @@ body{
 <h3 id="title"></h3>
 <p id="artist" style="color:#aaa"></p>
 
-<div class="time">
-<span id="current">00:00</span>
-<span id="duration">00:00</span>
+<div class="progress-wrapper">
+    <span id="current">0:00</span>
+
+    <input type="range" id="progress" value="0">
+
+    <span id="duration">0:00</span>
 </div>
 
-<input type="range" id="progress" class="progress" value="0">
-
 <div class="controls">
-<button onclick="toggleShuffle()">🔀</button>
-<button onclick="prevSong()">⏮</button>
-<button onclick="playPause()">▶/⏸</button>
-<button onclick="nextSong()">⏭</button>
-<button onclick="toggleRepeat()">🔁</button>
+    <button onclick="toggleShuffle()">
+        <i class="fa-solid fa-shuffle"></i>
+    </button>
+
+    <button onclick="prevSong()">
+        <i class="fa-solid fa-backward-step"></i>
+    </button>
+
+    <button onclick="playPause()">
+        <i class="fa-solid fa-play"></i>
+    </button>
+
+    <button onclick="nextSong()">
+        <i class="fa-solid fa-forward-step"></i>
+    </button>
+
+    <button onclick="toggleRepeat()">
+        <i class="fa-solid fa-repeat"></i>
+    </button>
 </div>
 
 <br>
@@ -248,10 +387,10 @@ const songs=[
 { name:"Chết Trong Em", artist:"Thịnh Suy", file:"music9.mp3", cover:"cover9.jpg", video:"video9.mp4", type:"buon"},
 { name:"「僕の心のヤバイやつ」", artist:"AniOp", file:"music10.mp3", cover:"cover10.jpg", video:"video10.mp4"},
 { name:"斜陽", artist:"ヨルシカ", file:"music11.mp3", cover:"cover11.jpg", video:"video11.mp4"},
-{ name:"Song 12", artist:"Artist 12", file:"music12.mp3", cover:"cover12.jpg", video:"video12.mp4"},
-{ name:"Song 13", artist:"Artist 13", file:"music13.mp3", cover:"cover13.jpg", video:"video13.mp4"},
-{ name:"Song 14", artist:"Artist 14", file:"music14.mp3", cover:"cover14.jpg", video:"video14.mp4"},
-{ name:"Song 15", artist:"Artist 15", file:"music15.mp3", cover:"cover15.jpg", video:"video15.mp4"},
+{ name:"「この素晴らしい世界に祝福を! 3」", artist:"Aqua", file:"music12.mp3", cover:"cover12.jpg", video:"video12.mp4"},
+{ name:"『打上花火』", artist:"DAOKO", file:"music13.mp3", cover:"cover13.jpg", video:"video13.mp4"},
+{ name:"『機動戦士ガンダム 水星の魔女』", artist:"YOASOBI", file:"music14.mp3", cover:"cover14.jpg", video:"video14.mp4"},
+{ name:"『君に届け 3RD SEASON』", artist:"【imase】", file:"music15.mp3", cover:"cover15.jpg", video:"video15.mp4"},
 { name:"Song 16", artist:"Artist 16", file:"music16.mp3", cover:"cover16.jpg", video:"video16.mp4"},
 { name:"Song 17", artist:"Artist 17", file:"music17.mp3", cover:"cover17.jpg", video:"video17.mp4"},
 { name:"Song 18", artist:"Artist 18", file:"music18.mp3", cover:"cover18.jpg", video:"video18.mp4"},
@@ -376,27 +515,42 @@ function toggleRepeat(){ repeat=!repeat; }
 
 /* Time format */
 function formatTime(sec){
-    let m=Math.floor(sec/60);
-    let s=Math.floor(sec%60);
-    return `${m<10?"0"+m:m}:${s<10?"0"+s:s}`;
+    if(isNaN(sec)) return "0:00";
+
+    let m = Math.floor(sec / 60);
+    let s = Math.floor(sec % 60);
+
+    return `${m}:${s < 10 ? "0" + s : s}`;
 }
 
+
 audio.addEventListener("loadedmetadata",()=>{
-    durationEl.innerText=formatTime(audio.duration);
+    durationEl.innerText = formatTime(audio.duration);
 });
 
+
 audio.addEventListener("timeupdate",()=>{
-    progress.value=(audio.currentTime/audio.duration)*100;
-    currentEl.innerText=formatTime(audio.currentTime);
+    const percent = (audio.currentTime/audio.duration)*100;
+    progress.value = percent;
+    progress.style.setProperty('--progress', percent + '%');
+    currentEl.innerText = formatTime(audio.currentTime);
 });
+
 
 progress.addEventListener("input",()=>{
     audio.currentTime=(progress.value/100)*audio.duration;
 });
 
-volume.value=0.7;
-audio.volume=0.7;
-volume.addEventListener("input",()=>audio.volume=volume.value);
+volume.value = 0.7;
+audio.volume = 0.7;
+
+volume.style.setProperty('--volume-progress', (volume.value * 100) + '%');
+
+volume.addEventListener("input", ()=>{
+    audio.volume = volume.value;
+    volume.style.setProperty('--volume-progress', (volume.value * 100) + '%');
+});
+
 
 audio.addEventListener("play",()=>cover.style.animationPlayState="running");
 audio.addEventListener("pause",()=>cover.style.animationPlayState="paused");
