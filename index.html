@@ -1,34 +1,227 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head><link rel="stylesheet" href="style.css?v=2">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
 <meta charset="UTF-8">
-<title>SpotiFree</title>
-<link rel="icon" type="image/png" href="icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpotiFree Ultra</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-    
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#000;color:white;overflow:hidden;transition:0.5s}
+
+/* BACKGROUND VIDEO */
+#bg-video{
+position:fixed;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-3;
+transition:opacity 1s ease;
+}
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(20px);
+z-index:-2;
+}
+
+/* SIDEBAR */
+.menu-btn{
+position:fixed;
+top:20px;
+left:280px;  /* 260px sidebar + 20px cách ra */
+background:var(--theme);
+border:none;
+width:45px;
+height:45px;
+font-size:20px;
+border-radius:12px;
+cursor:pointer;
+z-index:9999;
+display:flex;
+justify-content:center;
+align-items:center;
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+transition:0.3s;
+}
+
+
+
+.menu-btn:hover{
+transform:scale(1.1);
+}
+.playlist{
+position:fixed;
+left:0;
+top:0;
+width:260px;
+height:100vh;
+background:#111;
+padding:20px;
+overflow-y:auto;
+transition:0.3s;
+z-index:1;
+}
+
+.playlist.hide{transform:translateX(-100%)}
+
+.song-item{
+padding:8px;
+margin-bottom:6px;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+.song-item:hover{background:var(--theme)}
+.song-item.active{
+background:var(--theme);
+color:black;
+font-weight:bold;
+}
+
+/* PLAYER */
+.container{
+display:flex;
+justify-content:center;   /* QUAN TRỌNG */
+align-items:center;       /* QUAN TRỌNG */
+height:100vh;
+margin-left:260px;
+transition:0.3s ease;
+}
+
+.player{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.player-box{
+background:#181818;
+padding:30px;
+border-radius:20px;
+width:420px;
+text-align:center;
+box-shadow:0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* COVER */
+.cover{
+width:220px;
+height:220px;
+border-radius:50%;
+margin-bottom:20px;
+animation:spin 15s linear infinite;
+animation-play-state:paused;
+}
+@keyframes spin{
+from{transform:rotate(0deg)}
+to{transform:rotate(360deg)}
+}
+
+/* PROGRESS */
+.progress-wrapper{
+display:flex;
+align-items:center;
+gap:10px;
+margin:15px 0;
+}
+#progress{
+-webkit-appearance:none;
+width:100%;
+height:5px;
+border-radius:5px;
+background:linear-gradient(to right,var(--theme) 0%,#535353 0%);
+cursor:pointer;
+}
+#progress::-webkit-slider-thumb{
+-webkit-appearance:none;
+width:12px;
+height:12px;
+border-radius:50%;
+background:white;
+margin-top:-4px;
+}
+
+/* CONTROLS */
+.controls{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:10px;
+}
+.controls button{
+background:#181818;
+border:none;
+width:50px;
+height:50px;
+border-radius:50%;
+color:white;
+font-size:18px;
+cursor:pointer;
+transition:0.2s;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.controls button:hover{
+background:var(--theme);
+transform:scale(1.1);
+}
+.controls button.active{
+background:var(--theme);
+box-shadow:0 0 10px var(--theme);
+}
+.controls button.active i{
+color:black;
+}
+
+/* VOLUME */
+.volume{
+margin-top:15px;
+}
+.volume input{
+width:100%;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.container{margin-left:0}
+.playlist{width:100%;height:50vh;bottom:0;top:auto}
+.player-box{width:100%;height:100vh;border-radius:0}
+.cover{width:260px;height:260px}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-thumb{
+background:#3e3e3e;
+border-radius:10px;
+}
+::-webkit-scrollbar-thumb:hover{
+background:var(--theme);
+}
+
+:root{
+--theme:#1db954;
+}
 </style>
 </head>
+
 <body>
+
 <video autoplay muted loop id="bg-video"></video>
-<div class="blur"></div>
+<div class="overlay"></div>
 
-<div class="container">
+<button id="toggleSidebar" class="menu-btn">☰</button>
 
-<div class="playlist">
+<div class="playlist" id="sidebar">
 <h2>Danh Sách Nhạc</h2>
-
-<h3 style="margin-top:15px;color:#1db954;">is satboi time</h3>
-<div id="playlist-buon"></div>
-
-<h3 style="margin-top:20px;color:#1db954;">is wibu time</h3>
 <div id="playlist"></div>
-
 </div>
 
-
+<div class="container">
 <div class="player">
 <div class="player-box">
 
@@ -37,56 +230,35 @@
 <p id="artist" style="color:#aaa"></p>
 
 <div class="progress-wrapper">
-    <span id="current">0:00</span>
-
-    <input type="range" id="progress" value="0">
-
-    <span id="duration">0:00</span>
+<span id="current">0:00</span>
+<input type="range" id="progress" value="0">
+<span id="duration">0:00</span>
 </div>
 
 <div class="controls">
-    <button onclick="toggleShuffle()">
-        <i class="fa-solid fa-shuffle"></i>
-    </button>
-
-    <button onclick="prevSong()">
-        <i class="fa-solid fa-backward-step"></i>
-    </button>
-
-    <button onclick="playPause()">
-        <i class="fa-solid fa-play"></i>
-    </button>
-
-    <button onclick="nextSong()">
-        <i class="fa-solid fa-forward-step"></i>
-    </button>
-
-    <button onclick="toggleRepeat()">
-        <i class="fa-solid fa-repeat"></i>
-    </button>
+<button id="shuffleBtn"><i class="fa-solid fa-shuffle"></i></button>
+<button id="prevBtn"><i class="fa-solid fa-backward-step"></i></button>
+<button id="playBtn"><i class="fa-solid fa-play"></i></button>
+<button id="nextBtn"><i class="fa-solid fa-forward-step"></i></button>
+<button id="loopBtn"><i class="fa-solid fa-repeat"></i></button>
 </div>
 
-<br>
+<div class="volume">
 Âm Lượng
-<input type="range" id="volume" class="volume" min="0" max="1" step="0.01">
+<input type="range" id="volume" min="0" max="1" step="0.01">
+</div>
 
 <audio id="audio"></audio>
 
 </div>
 </div>
-
 </div>
 
 <script>
-
 const songs=[
-
 { name:"『 水鏡に雫 』", artist:"Vivia", file:"music1.mp3", cover:"cover1.jpg", video:"video1.mp4"},
 { name:"「Tabun (Có lẽ)」", artist:"YOASOBI", file:"music2.mp3", cover:"cover2.jpg", video:"video2.mp4"},
 { name:"水平線のような僕らへ", artist:"Vivid Lila", file:"music3.mp3", cover:"cover3.jpg", video:"video3.mp4"},
-
-// ===== Thêm 50 bài =====
-
 { name:"大塚 愛 / さくらんぼ", artist:"avex", file:"music4.mp3", cover:"cover4.jpg", video:"video4.mp4"},
 { name:"Ngã Tư Không Đèn", artist:"Nhạc Của Trang", file:"music5.mp3", cover:"cover5.jpg", video:"video5.mp4", type:"buon"},
 { name:"Ngồi Nhìn Em Khóc", artist:"Sáo", file:"music6.mp3", cover:"cover6.jpg", video:"video6.mp4", type:"buon"},
@@ -99,7 +271,7 @@ const songs=[
 { name:"『打上花火』", artist:"DAOKO", file:"music13.mp3", cover:"cover13.jpg", video:"video13.mp4"},
 { name:"『機動戦士ガンダム 水星の魔女』", artist:"YOASOBI", file:"music14.mp3", cover:"cover14.jpg", video:"video14.mp4"},
 { name:"『君に届け 3RD SEASON』", artist:"【imase】", file:"music15.mp3", cover:"cover15.jpg", video:"video15.mp4"},
-{ name:"Song 16", artist:"Artist 16", file:"music16.mp3", cover:"cover16.jpg", video:"video16.mp4"},
+{ name:"メガネを外して", artist:"乃紫 (noa)", file:"music16.mp3", cover:"cover16.jpg", video:"video16.mp4"},
 { name:"Song 17", artist:"Artist 17", file:"music17.mp3", cover:"cover17.jpg", video:"video17.mp4"},
 { name:"Song 18", artist:"Artist 18", file:"music18.mp3", cover:"cover18.jpg", video:"video18.mp4"},
 { name:"Song 19", artist:"Artist 19", file:"music19.mp3", cover:"cover19.jpg", video:"video19.mp4"},
@@ -139,8 +311,6 @@ const songs=[
 { name:"Song 53", artist:"Artist 53", file:"music53.mp3", cover:"cover53.jpg", video:"video53.mp4"}
 
 ];
-
-
 const audio=document.getElementById("audio");
 const title=document.getElementById("title");
 const artist=document.getElementById("artist");
@@ -151,131 +321,142 @@ const progress=document.getElementById("progress");
 const volume=document.getElementById("volume");
 const currentEl=document.getElementById("current");
 const durationEl=document.getElementById("duration");
+const playBtn=document.getElementById("playBtn");
+const nextBtn=document.getElementById("nextBtn");
+const prevBtn=document.getElementById("prevBtn");
+const shuffleBtn=document.getElementById("shuffleBtn");
+const loopBtn=document.getElementById("loopBtn");
 
-let currentSong=0;
+let currentSong=localStorage.getItem("songIndex") || 0;
 let shuffle=false;
-let repeat=false;
 
-/* Playlist */
-const playlistBuon = document.getElementById("playlist-buon");
-
-/* Nhạc Buồn */
+/* BUILD PLAYLIST */
 songs.forEach((song,index)=>{
-    if(song.type === "buon"){
-        const div=document.createElement("div");
-        div.classList.add("song-item");
-        div.innerText=song.name;
-        div.onclick=()=>loadSong(index);
-        playlistBuon.appendChild(div);
-    }
+const div=document.createElement("div");
+div.classList.add("song-item");
+div.innerText=song.name;
+div.onclick=()=>loadSong(index);
+playlist.appendChild(div);
 });
 
-/* Tất Cả Bài Hát (không gồm nhạc buồn) */
-songs.forEach((song,index)=>{
-    if(song.type !== "buon"){
-        const div=document.createElement("div");
-        div.classList.add("song-item");
-        div.innerText=song.name;
-        div.onclick=()=>loadSong(index);
-        playlist.appendChild(div);
-    }
-});
-
-
-
+function randomTheme(){
+const colors=["#1db954","#ff4d6d","#4cc9f0","#fca311","#9d4edd"];
+const random=colors[Math.floor(Math.random()*colors.length)];
+document.documentElement.style.setProperty("--theme",random);
+}
 
 function loadSong(index){
-    currentSong=index;
-    audio.src=songs[index].file;
-    title.innerText=songs[index].name;
-    artist.innerText=songs[index].artist;
-    cover.src=songs[index].cover;
-    bgVideo.src=songs[index].video;
+currentSong=index;
+localStorage.setItem("songIndex",index);
 
-    document.querySelectorAll(".song-item").forEach(el=>el.classList.remove("active"));
-    document.querySelectorAll(".song-item")[index].classList.add("active");
+audio.src=songs[index].file;
+title.innerText=songs[index].name;
+artist.innerText=songs[index].artist;
+cover.src=songs[index].cover;
 
-    audio.play();
+bgVideo.style.opacity=0;
+setTimeout(()=>{
+bgVideo.src=songs[index].video;
+bgVideo.style.opacity=1;
+},500);
+
+document.querySelectorAll(".song-item").forEach(el=>el.classList.remove("active"));
+document.querySelectorAll(".song-item")[index].classList.add("active");
+
+randomTheme();
+
+audio.play();
 }
 
 function playPause(){
-    audio.paused?audio.play():audio.pause();
+if(audio.paused){
+audio.play();
+playBtn.innerHTML='<i class="fa-solid fa-pause"></i>';
+}else{
+audio.pause();
+playBtn.innerHTML='<i class="fa-solid fa-play"></i>';
+}
 }
 
 function nextSong(){
-    if(shuffle){
-        currentSong=Math.floor(Math.random()*songs.length);
-    }else{
-        currentSong++;
-        if(currentSong>=songs.length) currentSong=0;
-    }
-    loadSong(currentSong);
+if(shuffle){
+currentSong=Math.floor(Math.random()*songs.length);
+}else{
+currentSong=(+currentSong+1)%songs.length;
+}
+loadSong(currentSong);
 }
 
 function prevSong(){
-    currentSong--;
-    if(currentSong<0) currentSong=songs.length-1;
-    loadSong(currentSong);
+currentSong=(currentSong-1+songs.length)%songs.length;
+loadSong(currentSong);
 }
 
-function toggleShuffle(){ shuffle=!shuffle; }
-function toggleRepeat(){ repeat=!repeat; }
+shuffleBtn.onclick=()=>{
+shuffle=!shuffle;
+shuffleBtn.classList.toggle("active");
+};
 
-/* Time format */
-function formatTime(sec){
-    if(isNaN(sec)) return "0:00";
+loopBtn.onclick=()=>{
+audio.loop=!audio.loop;
+loopBtn.classList.toggle("active");
+};
 
-    let m = Math.floor(sec / 60);
-    let s = Math.floor(sec % 60);
-
-    return `${m}:${s < 10 ? "0" + s : s}`;
-}
-
-
-audio.addEventListener("loadedmetadata",()=>{
-    durationEl.innerText = formatTime(audio.duration);
-});
-
+playBtn.onclick=playPause;
+nextBtn.onclick=nextSong;
+prevBtn.onclick=prevSong;
 
 audio.addEventListener("timeupdate",()=>{
-    const percent = (audio.currentTime/audio.duration)*100;
-    progress.value = percent;
-    progress.style.setProperty('--progress', percent + '%');
-    currentEl.innerText = formatTime(audio.currentTime);
+const percent=(audio.currentTime/audio.duration)*100;
+progress.value=percent;
+progress.style.background=`linear-gradient(to right,var(--theme) ${percent}%,#535353 ${percent}%)`;
+currentEl.innerText=formatTime(audio.currentTime);
+localStorage.setItem("songTime",audio.currentTime);
 });
 
-
-progress.addEventListener("input",()=>{
-    audio.currentTime=(progress.value/100)*audio.duration;
+audio.addEventListener("loadedmetadata",()=>{
+durationEl.innerText=formatTime(audio.duration);
+const savedTime=localStorage.getItem("songTime");
+if(savedTime) audio.currentTime=savedTime;
 });
 
-volume.value = 0.7;
-audio.volume = 0.7;
+progress.oninput=()=>{
+audio.currentTime=(progress.value/100)*audio.duration;
+};
 
-volume.style.setProperty('--volume-progress', (volume.value * 100) + '%');
-
-volume.addEventListener("input", ()=>{
-    audio.volume = volume.value;
-    volume.style.setProperty('--volume-progress', (volume.value * 100) + '%');
-});
-
+volume.value=0.7;
+audio.volume=0.7;
+volume.oninput=()=>audio.volume=volume.value;
 
 audio.addEventListener("play",()=>cover.style.animationPlayState="running");
 audio.addEventListener("pause",()=>cover.style.animationPlayState="paused");
+audio.addEventListener("ended",()=>nextSong());
 
-audio.addEventListener("ended",()=>{
-    if(repeat){
-        audio.play();
-    }else{
-        nextSong();
-    }
-});
+function formatTime(sec){
+if(isNaN(sec)) return "0:00";
+let m=Math.floor(sec/60);
+let s=Math.floor(sec%60);
+return `${m}:${s<10?"0"+s:s}`;
+}
 
-loadSong(0);
+const toggleBtn=document.getElementById("toggleSidebar");
+const sidebar=document.getElementById("sidebar");
+const container=document.querySelector(".container");
 
+toggleBtn.onclick=()=>{
+sidebar.classList.toggle("hide");
+
+if(sidebar.classList.contains("hide")){
+container.style.marginLeft = "0";
+toggleBtn.style.left="20px";
+}else{
+container.style.marginLeft = "260px";
+toggleBtn.style.left="280px";
+}
+};
+
+loadSong(currentSong);
 </script>
 
 </body>
 </html>
-
-
