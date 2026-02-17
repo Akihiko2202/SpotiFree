@@ -48,10 +48,11 @@ transition:0.3s;
 }
 
 
-
 .menu-btn:hover{
 transform:scale(1.1);
 }
+
+
 .playlist{
 position:fixed;
 left:0;
@@ -62,9 +63,7 @@ background:#111;
 padding:20px;
 overflow-y:auto;
 transition:0.3s;
-z-index:1;
 }
-
 .playlist.hide{transform:translateX(-100%)}
 
 .song-item{
@@ -311,6 +310,7 @@ const songs=[
 { name:"Song 53", artist:"Artist 53", file:"music53.mp3", cover:"cover53.jpg", video:"video53.mp4"}
 
 ];
+
 const audio=document.getElementById("audio");
 const title=document.getElementById("title");
 const artist=document.getElementById("artist");
@@ -454,6 +454,8 @@ container.style.marginLeft = "260px";
 toggleBtn.style.left="280px";
 }
 };
+
+
 
 loadSong(currentSong);
 </script>
